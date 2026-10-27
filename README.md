@@ -34,10 +34,11 @@ npm run seed     # regenera la semilla desde ../../import_data.sql
 
 ## Publicar
 
-1. `npm run build`
-2. Copiar el contenido de `dist/` a cualquier hosting estático (Nginx, Netlify, Vercel, GitHub Pages…).
+**GitHub Pages (automático).** Cada push a `main` corre `.github/workflows/deploy-pages.yml`, que instala, prueba, construye y publica en Pages. La primera corrida habilita Pages si todavía no está activo. El sitio queda en <https://manu743.github.io/Nutricion-Demo/>.
 
-`publicPath: './'` en `vue.config.js` permite servirlo tanto en la raíz del dominio como en un subdirectorio (`/demos/nutricion/`). No hay variables de entorno ni pasos de backend.
+**A mano.** `npm run build` y copiar el contenido de `dist/` a cualquier hosting estático (Nginx, Netlify, Vercel, un bucket…).
+
+`publicPath: './'` en `vue.config.js` permite servirlo tanto en la raíz del dominio como en un subdirectorio (`/demos/nutricion/`). No hay variables de entorno ni pasos de backend. Está probado sirviendo `dist/` desde `/nutricion-demo/`, que es lo que hace Pages con un repositorio de proyecto.
 
 ## Mantenimiento
 
