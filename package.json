@@ -1,0 +1,28 @@
+{
+  "name": "nutricion-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo estática de la app Nutrición, con datos de muestra y sin backend",
+  "scripts": {
+    "sync": "node scripts/sync-app.mjs",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test",
+    "seed": "node scripts/generate-seed.mjs"
+  },
+  "dependencies": {
+    "core-js": "^3.8.3",
+    "vue": "^3.2.13"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-service": "~5.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}
