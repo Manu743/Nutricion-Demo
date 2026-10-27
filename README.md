@@ -1,5 +1,7 @@
 # Nutrición · demo para portfolio
 
+👉 **[Ver la demo en vivo](https://manu743.github.io/Nutricion-Demo/)**
+
 Demo interactiva de la app de valores nutricionales de alimentos. Corre **100 % en el navegador**: no necesita Supabase, credenciales ni red. Los datos son una muestra real del PTBDA (Tabla de Composición de Alimentos de Bolivia).
 
 ## Qué muestra
