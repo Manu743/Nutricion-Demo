@@ -1,10 +1,30 @@
 <template>
   <section class="dieta-editor">
-    <h2>Planificación: {{ dieta.nombre }}</h2>
+    <div class="editor-header">
+      <h2>Planificación: {{ dieta.nombre }}</h2>
+      <button
+        class="columns-toggle"
+        :class="{ active: showPanel }"
+        @click="showPanel = !showPanel"
+      >
+        Columnas
+      </button>
+    </div>
+
     <p class="hint">
       Agregá comidas y alimentos; los totales se calculan automáticamente.
       La adecuación aceptable es {{ ADEQUACY_MIN }}–{{ ADEQUACY_MAX }} %; fuera de ese rango se marca en rojo.
+      Las columnas que elijas se aplican a todas las tablas del plan.
     </p>
+
+    <ColumnVisibilityPanel
+      v-if="showPanel"
+      :columns="numericColumns"
+      :visible-columns="visibleColumns"
+      @toggle="toggleColumn"
+      @show-all="showAllColumns"
+      @hide-all="hideAllColumns"
+    />
 
     <div class="meal-form">
       <input
@@ -135,7 +155,7 @@
         Esta dieta no tiene comidas todavía. Agregá la primera arriba.
       </p>
 
-      <DietaTotales v-if="meals.length" :meals="meals" />
+      <DietaTotales v-if="meals.length" :meals="meals" :storage-key="columnStorageKey" />
     </div>
   </section>
 </template>
@@ -153,6 +173,7 @@ import {
   isOutOfRange
 } from '../data/mealNutrients'
 import { useColumnVisibility } from '../composables/useColumnVisibility'
+import ColumnVisibilityPanel from './ColumnVisibilityPanel.vue'
 import DietaTotales from './DietaTotales.vue'
 
 const props = defineProps({
@@ -179,9 +200,18 @@ const searchTerms = reactive({})
 const searchResults = reactive({})
 const searchTimers = {}
 
-// Misma selección de columnas que la tabla de totales: ambas vistas se sincronizan.
+// Una sola selección por plan: la comparten la tabla de cada comida y los totales.
+// El componente se remonta por dieta (`:key`), así que la clave es estable.
 const numericColumns = NUMERIC_NUTRIENT_COLUMNS
-const { visibleColDefs } = useColumnVisibility(numericColumns, 'dietTotals.visibleColumns')
+const columnStorageKey = `diet.${props.dieta.id}.visibleColumns`
+const {
+  showPanel,
+  visibleColumns,
+  visibleColDefs,
+  toggleColumn,
+  showAllColumns,
+  hideAllColumns
+} = useColumnVisibility(numericColumns, columnStorageKey)
 
 const canAddMeal = computed(() => newMealNombre.value.trim().length > 0)
 
@@ -343,10 +373,36 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
 .dieta-editor h2 {
-  margin: 0 0 6px 0;
+  margin: 0;
   font-size: 16px;
   color: #2c3e50;
+}
+
+.columns-toggle {
+  padding: 8px 12px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: white;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.columns-toggle:hover,
+.columns-toggle.active {
+  border-color: #42b983;
+  color: #42b983;
 }
 
 .hint {

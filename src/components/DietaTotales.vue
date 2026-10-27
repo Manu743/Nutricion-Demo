@@ -4,24 +4,8 @@
       <h3>Totales de la dieta</h3>
       <div class="totals-actions">
         <ViewModeToggle v-model="viewMode" />
-        <button
-          class="columns-toggle"
-          :class="{ active: showPanel }"
-          @click="showPanel = !showPanel"
-        >
-          Columnas
-        </button>
       </div>
     </div>
-
-    <ColumnVisibilityPanel
-      v-if="showPanel"
-      :columns="numericColumns"
-      :visible-columns="visibleColumns"
-      @toggle="toggleColumn"
-      @show-all="showAllColumns"
-      @hide-all="hideAllColumns"
-    />
 
     <div v-if="viewMode === 'table'" class="table-container">
       <table class="totals-table">
@@ -29,7 +13,7 @@
           <tr>
             <th class="sticky-col">Comida</th>
             <th v-for="col in visibleColDefs" :key="col.key">{{ col.label }}</th>
-            <th v-for="nutrient in MEAL_NUTRIENTS" :key="nutrient.key" class="adequacy-head">
+            <th v-for="nutrient in visibleMealNutrients" :key="nutrient.key" class="adequacy-head">
               Adec. {{ nutrient.label }}
             </th>
           </tr>
@@ -41,7 +25,7 @@
               {{ formatNutrient(row.totals[col.key]) }}
             </td>
             <td
-              v-for="nutrient in MEAL_NUTRIENTS"
+              v-for="nutrient in visibleMealNutrients"
               :key="nutrient.key"
               class="adequacy-col"
               :class="{ danger: isOutOfRange(mealAdequacy(row.meal, nutrient)) }"
@@ -56,7 +40,7 @@
               {{ formatNutrient(dayTotals[col.key]) }}
             </td>
             <td
-              v-for="nutrient in MEAL_NUTRIENTS"
+              v-for="nutrient in visibleMealNutrients"
               :key="nutrient.key"
               class="adequacy-col"
               :class="{ danger: isOutOfRange(dayAdequacy(nutrient)) }"
@@ -115,23 +99,25 @@ import {
 } from '../data/mealNutrients'
 import { useColumnVisibility } from '../composables/useColumnVisibility'
 import { useViewMode } from '../composables/useViewMode'
-import ColumnVisibilityPanel from './ColumnVisibilityPanel.vue'
 import ViewModeToggle from './ViewModeToggle.vue'
 
 const props = defineProps({
-  meals: { type: Array, default: () => [] }
+  meals: { type: Array, default: () => [] },
+  // Misma clave que usa DietaEditor: la selección es del plan, no de cada tabla.
+  storageKey: { type: String, required: true }
 })
 
 const numericColumns = NUMERIC_NUTRIENT_COLUMNS
 
-const {
-  showPanel,
-  visibleColumns,
-  visibleColDefs,
-  toggleColumn,
-  showAllColumns,
-  hideAllColumns
-} = useColumnVisibility(numericColumns, 'dietTotals.visibleColumns')
+const { visibleColumns, visibleColDefs } = useColumnVisibility(numericColumns, props.storageKey)
+
+// La adecuación es del nutriente total: se oculta cuando ninguna de sus fuentes
+// está visible, para no dejar columnas que el usuario ya apagó.
+const visibleMealNutrients = computed(() =>
+  MEAL_NUTRIENTS.filter(nutrient =>
+    nutrient.sources.some(key => visibleColumns.value.includes(key))
+  )
+)
 
 const { viewMode } = useViewMode('dietTotals.viewMode')
 
@@ -218,23 +204,6 @@ function recText(value, nutrient) {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-.columns-toggle {
-  padding: 8px 12px;
-  font-size: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: white;
-  color: #2c3e50;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.columns-toggle:hover,
-.columns-toggle.active {
-  border-color: #42b983;
-  color: #42b983;
 }
 
 .table-container {

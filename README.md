@@ -8,7 +8,7 @@ Demo interactiva de la app de valores nutricionales de alimentos. Corre **100 % 
 
 - 88 alimentos con las 28 columnas nutricionales del PTBDA, valores por 100 g.
 - 19 grupos y 25 subgrupos de alimentos.
-- Búsqueda sin acentos ni mayúsculas, vista tabla/tarjetas y columnas configurables (se recuerdan en `localStorage`).
+- Búsqueda sin acentos ni mayúsculas, vista tabla/tarjetas y columnas configurables: elegís una vez por plan y se aplican a todas sus tablas, incluidas las de adecuación.
 - Dos planes de dieta de ejemplo (2200 kcal y 2050 kcal) con 9 comidas y 37 ítems.
 - Tabla detallada por comida y totales con adecuación 90–110 %: una comida queda fuera de rango a propósito para mostrar el estado de alerta.
 - Alta, edición y borrado de alimentos, grupos, subgrupos, dietas, comidas e ítems.
@@ -105,5 +105,5 @@ nutricion-demo/
 - **Stack:** Vue 3 (`<script setup>`), Vue CLI 5, Supabase JS v2. Sin router ni estado global: una sola pantalla con pestañas.
 - **Organización:** componentes de presentación + un composable por dominio (`useFoods`, `useGrupos`, `useSubgrupos`, `useDietas`), datos compartidos en `src/data` y utilidades en `src/utils`.
 - **Cálculo nutricional:** todo se deriva en el cliente. `nutrientAmount` escala el valor por 100 g según los gramos y la adecuación se calcula como `total real / recomendado × 100`.
-- **Decisiones reutilizables:** `useColumnVisibility` y `useViewMode` encapsulan estado persistido y se comparten entre la lista de alimentos y los totales de dieta; `ColumnVisibilityPanel` y `ViewModeToggle` son sus contrapartes visuales.
+- **Decisiones reutilizables:** `useColumnVisibility` y `useViewMode` encapsulan estado persistido; la selección de columnas se guarda por dieta y la comparten el editor de comidas y los totales. `ColumnVisibilityPanel` y `ViewModeToggle` son sus contrapartes visuales.
 - **Búsqueda:** normalización NFD sin diacríticos en `src/utils/textSearch.js`, aplicada en memoria sobre el catálogo ya cargado.
