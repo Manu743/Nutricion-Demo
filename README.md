@@ -34,7 +34,9 @@ npm run seed     # regenera la semilla desde ../../import_data.sql
 
 ## Publicar
 
-**GitHub Pages (automático).** Cada push a `main` corre `.github/workflows/deploy-pages.yml`, que instala, prueba, construye y publica en Pages. La primera corrida habilita Pages si todavía no está activo. El sitio queda en <https://manu743.github.io/Nutricion-Demo/>.
+**GitHub Pages (automático).** Cada push a `main` corre `.github/workflows/deploy-pages.yml`, que instala, prueba, construye y publica en Pages. El sitio queda en <https://manu743.github.io/Nutricion-Demo/>.
+
+Antes del primer deploy hay que activar Pages una sola vez: **Settings → Pages → Build and deployment → Source: GitHub Actions**. El workflow no puede hacerlo solo: la API para crear el sitio exige un token con permisos de administración, y el `GITHUB_TOKEN` del workflow no los tiene.
 
 **A mano.** `npm run build` y copiar el contenido de `dist/` a cualquier hosting estático (Nginx, Netlify, Vercel, un bucket…).
 
